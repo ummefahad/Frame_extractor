@@ -1,0 +1,27 @@
+import cv2
+from pytube import YouTube
+from google.colab.patches import cv2_imshow
+
+def download_video(video_url):
+    yt = YouTube(video_url)
+    stream = yt.streams.filter(progressive=True, file_extension='mp4').first()
+    filename = stream.download()
+    return filename
+
+def framecapture(video_path):
+    vidobj = cv2.VideoCapture(video_path)
+    count = 0
+    success = True
+    while success:
+        success, img = vidobj.read()
+        if success:
+            cv2_imshow(img)
+            cv2.imwrite(f'frame{count}.jpg', img)
+            print(f'Frame {count} saved')
+            count += 1
+    vidobj.release()
+
+if __name__ == '__main__':
+    video_url = "https://www.youtube.com/watch?v=xZxh4NF-xy4"
+    video_path = download_video(video_url)
+    framecapture(video_path)
